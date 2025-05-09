@@ -10,10 +10,22 @@ const app = express();
 
 // Middleware
 app.use(express.json());
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://taskmanagerfrontend-tan.vercel.app',
+];
+
 app.use(cors({
-  origin: 'https://taskmanagerfrontend-tan.vercel.app/',
-  methods: ['GET', 'POST', 'DELETE'],
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type'],
+  credentials: true,
 }));
 
 // MongoDB connection
