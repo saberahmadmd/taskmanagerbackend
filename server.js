@@ -8,13 +8,15 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
-app.use(express.json());
+// ✅ Update allowed frontend origins here
 const allowedOrigins = [
   'http://localhost:3000',
   'https://taskmanagerfrontend-tan.vercel.app',
+  'https://taskmanagerfrontend-git-main-md-saber-ahmads-projects.vercel.app',
+  'https://taskmanagerfrontend-md-saber-ahmads-projects.vercel.app', // 👈 this is important!
 ];
 
+// ✅ Proper CORS config
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
@@ -23,10 +25,16 @@ app.use(cors({
       callback(new Error('Not allowed by CORS'));
     }
   },
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type'],
   credentials: true,
 }));
+
+app.use(express.json());
+
+// ✅ Place this BEFORE your routes
+// Example route
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'CORS is working!' });
+});
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
